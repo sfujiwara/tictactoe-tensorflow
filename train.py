@@ -16,6 +16,8 @@ def inference(x_ph):
     return y
 
 
+np.random.seed(0)
+
 df = pd.read_csv(os.path.join("data", "tictactoe.csv"))
 x_train = df.iloc[:, :-1].values.astype(float)
 
@@ -32,6 +34,7 @@ for i, j in enumerate(df.iloc[:, -1].values):
         y_train[i][2] = 1.
 
 with tf.Graph().as_default() as g:
+    tf.set_random_seed(0)
     x_ph = tf.placeholder(tf.float32, [None, 9])
     y_ph = tf.placeholder(tf.float32, [None, 3])
     y = inference(x_ph)

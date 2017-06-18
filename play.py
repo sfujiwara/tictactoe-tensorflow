@@ -24,8 +24,13 @@ with tf.Graph().as_default() as g:
 
 env = tictactoe.TicTacToeEnv()
 observation = env.reset()
+done = False
+info = None
 for _ in range(9):
     env.render()
+    if done:
+        print(info)
+        break
     # Compute scores
     scores = np.zeros(9)
     for i in range(9):
@@ -33,10 +38,13 @@ for _ in range(9):
             board_copy = np.array([env.board])
             board_copy[0][i] = 1
             prob = sess.run(y, feed_dict={x_ph: board_copy})
-            print i, prob
+            # print i, prob
             scores[i] = prob[0][0]/prob[0][1]
-    print scores
-    env.step(scores.argmax())
+    # print scores
+    _, _, done, info = env.step(scores.argmax())
     env.render()
+    if done:
+        print(info)
+        break
     player_move = input()
-    env.step(player_move)
+    _, _, done, info = env.step(player_move)
