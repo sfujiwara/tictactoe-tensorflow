@@ -39,7 +39,7 @@ for _ in range(9):
             board_copy[0][i] = 1
             prob = sess.run(y, feed_dict={x_ph: board_copy})
             # print i, prob
-            scores[i] = prob[0][0]/prob[0][1]
+            scores[i] = prob[0][0]
     # print scores
     _, _, done, info = env.step(scores.argmax())
     env.render()

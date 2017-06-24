@@ -41,7 +41,7 @@ with tf.Graph().as_default() as g:
     cross_entropy = -tf.reduce_mean(y_ph * tf.log(y))
     correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_ph, 1))
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-    train_op = tf.train.AdamOptimizer(learning_rate=0.0001).minimize(cross_entropy)
+    train_op = tf.train.AdamOptimizer(learning_rate=0.0002).minimize(cross_entropy)
     init_op = tf.global_variables_initializer()
     saver = tf.train.Saver()
     with tf.Session() as sess:
