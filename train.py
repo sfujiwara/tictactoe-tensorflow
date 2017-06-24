@@ -18,11 +18,11 @@ def inference(x_ph):
 
 np.random.seed(0)
 
-df = pd.read_csv(os.path.join("data", "tictactoe.csv"))
-x_train = df.iloc[:, :-1].values.astype(float)
+mat = np.loadtxt("data/tictactoe.csv", skiprows=1, delimiter=",")
 
-y_train = np.zeros([len(df), 3])
-for i, j in enumerate(df.iloc[:, -1].values):
+x_train = mat[:, :-1]
+y_train = np.zeros([len(mat), 3])
+for i, j in enumerate(mat[:, -1]):
     if j == 1:
         # x win
         y_train[i][0] = 1.
