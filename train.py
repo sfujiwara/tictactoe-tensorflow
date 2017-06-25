@@ -13,22 +13,27 @@ def inference(x_ph):
     return y
 
 
-np.random.seed(0)
+np.random.seed(1)
 
 mat = np.loadtxt("data/tictactoe.csv", skiprows=1, delimiter=",")
+ind_train = np.random.choice(5890, 4000, replace=False)
+ind_test = np.array([i for i in range(5890) if i not in ind_train])
 
-x_train = mat[:, :-1]
-y_train = np.zeros([len(mat), 3])
+x_train = mat[ind_train, :-1]
+x_test = mat[ind_test, :-1]
+y_all = np.zeros([len(mat), 3])
 for i, j in enumerate(mat[:, -1]):
     if j == 1:
         # x win
-        y_train[i][0] = 1.
+        y_all[i][0] = 1.
     elif j == -1:
         # o win
-        y_train[i][1] = 1.
+        y_all[i][1] = 1.
     else:
         # draw
-        y_train[i][2] = 1.
+        y_all[i][2] = 1.
+y_train = y_all[ind_train]
+y_test = y_all[ind_test]
 
 with tf.Graph().as_default() as g:
     tf.set_random_seed(0)
@@ -49,7 +54,8 @@ with tf.Graph().as_default() as g:
             if i % 100 == 0:
                 train_loss = sess.run(cross_entropy, feed_dict={x_ph: x_train, y_ph: y_train})
                 train_accuracy, y_pred = sess.run([accuracy, y], feed_dict={x_ph: x_train, y_ph: y_train})
-                print("Iteration: {0} Loss: {1} Accuracy: {2}".format(i, train_loss, train_accuracy))
+                test_accuracy = sess.run(accuracy, feed_dict={x_ph: x_test, y_ph: y_test})
+                print("Iteration: {0} Loss: {1} Train Accuracy: {2} Test Accuracy{3}".format(i, train_loss, train_accuracy, test_accuracy))
         if not os.path.isdir("checkpoints"):
             os.mkdir("checkpoints")
         saver.save(sess, "checkpoints/tictactoe")
