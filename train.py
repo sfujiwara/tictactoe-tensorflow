@@ -6,10 +6,8 @@ import tensorflow as tf
 
 
 def inference(x_ph):
-    hidden1 = tf.layers.dense(x_ph, 32)
-    hidden1 = tf.nn.relu(hidden1)
-    hidden2 = tf.layers.dense(hidden1, 32)
-    hidden2 = tf.nn.relu(hidden2)
+    hidden1 = tf.layers.dense(x_ph, 32, activation=tf.nn.relu)
+    hidden2 = tf.layers.dense(hidden1, 32, activation=tf.nn.relu)
     logits = tf.layers.dense(hidden2, 3)
     y = tf.nn.softmax(logits)
     return y
@@ -52,7 +50,6 @@ with tf.Graph().as_default() as g:
                 train_loss = sess.run(cross_entropy, feed_dict={x_ph: x_train, y_ph: y_train})
                 train_accuracy, y_pred = sess.run([accuracy, y], feed_dict={x_ph: x_train, y_ph: y_train})
                 print("Iteration: {0} Loss: {1} Accuracy: {2}".format(i, train_loss, train_accuracy))
-                # tf.logging.info(y_pred)
         if not os.path.isdir("checkpoints"):
             os.mkdir("checkpoints")
         saver.save(sess, "checkpoints/tictactoe")

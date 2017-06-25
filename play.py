@@ -26,6 +26,23 @@ env = tictactoe.TicTacToeEnv()
 observation = env.reset()
 done = False
 info = None
+
+rule = """
+Input your move!
+
+[0] top-left-square
+[1] top-middle-square
+[2] top-right-square
+[3] middle-left-square
+[4] middle-middle-square
+[5] middle-right-square
+[6] bottom-left-square
+[7] bottom-middle-square
+[8] bottom-right-square
+"""
+
+print(rule)
+
 for _ in range(9):
     env.render()
     if done:
@@ -46,5 +63,6 @@ for _ in range(9):
     if done:
         print(info)
         break
+    print("Input your move:")
     player_move = input()
     _, _, done, info = env.step(player_move)
