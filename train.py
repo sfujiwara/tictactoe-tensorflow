@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import shutil
 import numpy as np
 import tensorflow as tf
 
@@ -9,8 +10,7 @@ def inference(x_ph):
     hidden1 = tf.layers.dense(x_ph, 32, activation=tf.nn.relu)
     hidden2 = tf.layers.dense(hidden1, 32, activation=tf.nn.relu)
     logits = tf.layers.dense(hidden2, 3)
-    y = tf.nn.softmax(logits)
-    return y
+    return logits
 
 
 np.random.seed(1)
@@ -39,16 +39,17 @@ with tf.Graph().as_default() as g:
     tf.set_random_seed(0)
     x_ph = tf.placeholder(tf.float32, [None, 9])
     y_ph = tf.placeholder(tf.float32, [None, 3])
-    y = inference(x_ph)
-    cross_entropy = -tf.reduce_mean(y_ph * tf.log(y))
+    logits = inference(x_ph)
+    y = tf.nn.softmax(logits)
+    cross_entropy = tf.losses.softmax_cross_entropy(onehot_labels=y_ph, logits=logits, label_smoothing=1e-5)
     correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_ph, 1))
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-    train_op = tf.train.AdamOptimizer(learning_rate=0.0002).minimize(cross_entropy)
+    train_op = tf.train.AdamOptimizer(learning_rate=0.01).minimize(cross_entropy)
     init_op = tf.global_variables_initializer()
     saver = tf.train.Saver()
     with tf.Session() as sess:
         sess.run(init_op)
-        for i in range(20000):
+        for i in range(10000):
             ind = np.random.choice(len(y_train), 1000)
             sess.run(train_op, feed_dict={x_ph: x_train[ind], y_ph: y_train[ind]})
             if i % 100 == 0:
@@ -59,6 +60,8 @@ with tf.Graph().as_default() as g:
         if not os.path.isdir("checkpoints"):
             os.mkdir("checkpoints")
         saver.save(sess, "checkpoints/tictactoe")
+        # Remove old model
+        shutil.rmtree("model")
         # Save model for deployment on ML Engine
         input_key = tf.placeholder(tf.int64, [None, ], name="key")
         output_key = tf.identity(input_key)

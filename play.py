@@ -49,16 +49,28 @@ for _ in range(9):
         print(info)
         break
     # Compute scores
-    scores = np.zeros(9)
+    prob_x_win = -np.ones(9)
+    prob_o_win = np.ones(9)
+    prob_draw = np.zeros(9)
     for i in range(9):
         if env.board[i] == 0:
             board_copy = np.array([env.board])
             board_copy[0][i] = 1
             prob = sess.run(y, feed_dict={x_ph: board_copy})
             # print i, prob
-            scores[i] = prob[0][0]
+            prob_x_win[i] = prob[0][0]
+            prob_o_win[i] = prob[0][1]
+            prob_draw = prob[0][2]
     # print scores
-    _, _, done, info = env.step(scores.argmax())
+    print(prob_x_win)
+    print(prob_o_win)
+    print(prob_draw)
+    # Decide CPU's move
+    if max(prob_x_win) >= 0.05:
+        cpu_move = prob_x_win.argmax()
+    else:
+        cpu_move = prob_o_win.argmin()
+    _, _, done, info = env.step(cpu_move)
     env.render()
     if done:
         print(info)
