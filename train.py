@@ -56,7 +56,11 @@ with tf.Graph().as_default() as g:
                 train_loss = sess.run(cross_entropy, feed_dict={x_ph: x_train, y_ph: y_train})
                 train_accuracy, y_pred = sess.run([accuracy, y], feed_dict={x_ph: x_train, y_ph: y_train})
                 test_accuracy = sess.run(accuracy, feed_dict={x_ph: x_test, y_ph: y_test})
-                print("Iteration: {0} Loss: {1} Train Accuracy: {2} Test Accuracy{3}".format(i, train_loss, train_accuracy, test_accuracy))
+                print(
+                    "Iteration: {0} Loss: {1} Train Accuracy: {2} Test Accuracy{3}".format(
+                        i, train_loss, train_accuracy, test_accuracy
+                    )
+                )
         if not os.path.isdir("checkpoints"):
             os.mkdir("checkpoints")
         saver.save(sess, "checkpoints/tictactoe")
