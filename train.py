@@ -61,7 +61,8 @@ with tf.Graph().as_default() as g:
             os.mkdir("checkpoints")
         saver.save(sess, "checkpoints/tictactoe")
         # Remove old model
-        shutil.rmtree("model")
+        if os.path.exists("model"):
+            shutil.rmtree("model")
         # Save model for deployment on ML Engine
         input_key = tf.placeholder(tf.int64, [None, ], name="key")
         output_key = tf.identity(input_key)
