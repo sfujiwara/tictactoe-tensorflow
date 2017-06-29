@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import sys
 import numpy as np
 import tensorflow as tf
 import tictactoe
@@ -20,7 +21,6 @@ with tf.Graph().as_default() as g:
     # Get input and output tensors
     x_ph = sess.graph.get_tensor_by_name(input_tensor_name)
     y = sess.graph.get_tensor_by_name(output_tensor_name)
-    print sess.run(y, feed_dict={x_ph: np.zeros([1, 9])})
 
 env = tictactoe.TicTacToeEnv()
 observation = env.reset()
@@ -46,12 +46,17 @@ print(rule)
 for _ in range(9):
     env.render()
     if done:
-        print(info)
+        if info["x"]:
+            print("x win!")
+        elif info["o"]:
+            print("o win!")
+        else:
+            print("Draw!")
         break
     # Compute scores
     prob_x_win = -np.ones(9)
     prob_o_win = np.ones(9)
-    prob_draw = np.zeros(9)
+    # prob_draw = np.zeros(9)
     for i in range(9):
         if env.board[i] == 0:
             board_copy = np.array([env.board])
@@ -60,11 +65,7 @@ for _ in range(9):
             # print i, prob
             prob_x_win[i] = prob[0][0]
             prob_o_win[i] = prob[0][1]
-            prob_draw = prob[0][2]
-    # print scores
-    print(prob_x_win)
-    print(prob_o_win)
-    print(prob_draw)
+            # prob_draw = prob[0][2]
     # Decide CPU's move
     if max(prob_x_win) >= 0.05:
         cpu_move = prob_x_win.argmax()
@@ -73,8 +74,16 @@ for _ in range(9):
     _, _, done, info = env.step(cpu_move)
     env.render()
     if done:
-        print(info)
+        if info["x"]:
+            print("x win!")
+        elif info["o"]:
+            print("o win!")
+        else:
+            print("Draw!")
         break
-    print("Input your move:")
-    player_move = input()
-    _, _, done, info = env.step(player_move)
+    while True:
+        sys.stdout.write("Input your move: ")
+        player_move = input()
+        _, _, done, info = env.step(player_move)
+        if info["valid"]:
+            break

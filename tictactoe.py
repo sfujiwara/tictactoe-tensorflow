@@ -18,6 +18,7 @@ class TicTacToeEnv:
     def step(self, index):
         if self.board[index] != 0:
             print("Invalid move!!")
+            return None, None, None, {"valid": False}
         elif self.current_player == "x":
             self.board[index] = 1
             self.current_player = "o"
@@ -61,5 +62,5 @@ class TicTacToeEnv:
         if 0 not in self.board:
             is_full = True
         done = x_win or o_win or is_full
-        info = {"x": x_win, "o": o_win, "full": is_full}
+        info = {"x": x_win, "o": o_win, "full": is_full, "valid": True}
         return done, info
