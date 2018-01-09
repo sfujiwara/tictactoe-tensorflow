@@ -83,7 +83,7 @@ for _ in range(9):
         break
     while True:
         sys.stdout.write("Input your move: ")
-        player_move = input()
+        player_move = int(input())
         _, _, done, info = env.step(player_move)
         if info["valid"]:
             break
