@@ -9,7 +9,8 @@ import tensorflow as tf
 def inference(x_ph):
     hidden1 = tf.layers.dense(x_ph, 32, activation=tf.nn.relu)
     hidden2 = tf.layers.dense(hidden1, 32, activation=tf.nn.relu)
-    logits = tf.layers.dense(hidden2, 3)
+    hidden3 = tf.layers.dense(hidden2, 32, activation=tf.nn.relu)
+    logits = tf.layers.dense(hidden3, 3)
     return logits
 
 
